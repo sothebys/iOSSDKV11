@@ -23,7 +23,7 @@ import AcuantCommon
     var captureSession: DocumentCaptureSession!
     var lastDeviceOrientation : UIDeviceOrientation!
     var videoPreviewLayer: AVCaptureVideoPreviewLayer!
-    var messageLayer :AcuantCameraTextView! = nil
+    var messageLayer :CameraTextView! = nil
     var cornerLayer : CameraCornerOverlayView! = nil
     var shapeLayer : CameraDocumentOverlayView! = nil
     var captured : Bool = false
@@ -33,7 +33,7 @@ import AcuantCommon
     
     private let context = CIContext()
     private var currentPoints : [CGPoint]? = nil
-    private var options : AcuantCameraOptions? = nil
+    private var options : CameraOptions? = nil
     weak private var cameraCaptureDelegate : CameraCaptureDelegate? = nil
     
     private var currentState = FrameResult.NO_DOCUMENT
@@ -42,8 +42,8 @@ import AcuantCommon
     private var holdSteadyTimer: Timer!
     
     private let captureTime = 1
-    private let documentMovementThreshold = 45
-    private let previewBoundsThreshold: CGFloat = 25
+    private let documentMovementThreshold = 25
+    private let previewBoundsThreshold: CGFloat = -5
 
     private var currentStateCount = 0
     private var nextState = FrameResult.NO_DOCUMENT
@@ -138,12 +138,12 @@ import AcuantCommon
         self.captureSession = DocumentCaptureSession.getDocumentCaptureSession(delegate: self, frameDelegate: self, autoCaptureDelegate: self, captureDevice: captureDevice)
         self.captureSession.start()
         self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
-        self.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        self.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspect
         self.videoPreviewLayer.frame = self.view.layer.bounds
         self.videoPreviewLayer.connection?.videoOrientation = .portrait
         
         if(self.messageLayer == nil) {
-            self.messageLayer = AcuantCameraTextView(autoCapture: autoCapture)
+            self.messageLayer = CameraTextView(autoCapture: autoCapture)
         }
         self.messageLayer.setFrame(frame: self.view!.frame);
         if(self.cornerLayer == nil) {
@@ -165,8 +165,9 @@ import AcuantCommon
     }
     
     public func documentCaptured(image: UIImage, barcodeString: String?) {
-        let result = Image()
-        result.image = rotateImage(image: image)
+        let result = ImagePreparation.createCameraImage(image: rotateImage(image: image), data: CameraMetaData().setCaptureType(captureType: autoCapture ? "AUTO" : "TAP"))
+        //result.image = rotateImage(image: image)
+        //result.captureType = autoCapture ? "AUTO" : "TAP"
         self.navigationController?.popViewController(animated: true)
         self.cameraCaptureDelegate?.setCapturedImage(image: result, barcodeString: barcodeString)
     }

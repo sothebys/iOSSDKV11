@@ -1,6 +1,6 @@
-# Acuant iOS SDK v11.4.7
+# Acuant iOS SDK v11.5.1
 
-**December 2020**
+**June 2021**
 
 See [https://github.com/Acuant/iOSSDKV11/releases](https://github.com/Acuant/iOSSDKV11/releases) for release notes.
 
@@ -20,9 +20,17 @@ This document provides detailed information about the Acuant iOS SDK. The Acuant
 **Note:** The acceptable quality image is well-cropped, sharp and with no glare present, has a resolution of at least 300 dpi (for data capture) or 600 dpi (for authentication). The aspect ratio should be acceptable and matches an ID document.
 
 ----------
+
+## Updating to 11.5.1+
+
+Please see the provided [migration details document](iOSmigrationdetails.pdf) for information about updating to 11.5.1+
+
+----------
+
 ## Prerequisites
 
 - iOS version 11.0 or later
+- Xcode 12.5
 
 ## Modules
 
@@ -88,19 +96,22 @@ The SDK includes the following modules:
  -	**AcuantFaceMatch**
  -	**AcuantEchipReader**
  -	**AcuantCamera**
- 		- TesseractOCRiOS.framework
+ 		- TesseractOCR.framework
  -	**AcuantIPLiveness**
-	 	- iProov.framework
- 		- KeychainAccess.framework
- 		- SocketIO.framework
- 		- Starscream.framework
- 		- SwiftyJSON.framework
+	 	- iProov.xcframework
+ 		- KeychainAccess.xcframework
+ 		- SocketIO.xcframework
+ 		- Starscream.xcframework
+ 		- SwiftyJSON.xcframework
 
 	![](docs/embeded_framework.png)
 	
 	**Note:** AcuantCamera and AcuantFaceCapture are open projects. You will have to add the source code to your solution for frameworks.
 
-### Using Carthage
+1. Get Carthage [https://github.com/Carthage/Carthage](https://github.com/Carthage/Carthage)
+
+   **Note:** The SDK does not support downloading from Carthage. The usage of Carthage here is to simplify copying frameworks and slicing unwanted architectures.
+
 1. Open your project in Xcode and navigate to Build Phases tab in application project settings. Add a "New Run Script".
 
 1.  Add the following to the script.
@@ -109,71 +120,75 @@ The SDK includes the following modules:
 
 1. Create new inputFileList.xcfilelist and outputFileList.xcfilelist. Add necessary frameworks to both files. Example in repository.
 
-1. Add the .xcfilelist to your run script. For additional information, please visit [https://github.com/Carthage/Carthage](https://github.com/Carthage/Carthage).
+1. Add the .xcfilelist to your run script.
+
+	For additional information, please visit [https://github.com/Carthage/Carthage](https://github.com/Carthage/Carthage).
 
 ----------
 
-### Using COCOAPODS
-1. If you are using COCOAPODS, then add the following podfile:
+### Using CocoaPods
+
+**Important Note:** When using import statements for open projects (specifically AcuantCamera and AcuantFaceCapture) with CocoaPods, please use `import AcuantiOSSDKV11` in Xcode.
+
+1. Add the following in the podfile to get **all** the modules:
 
 		platform :ios, '11'
-		pod 'AcuantiOSSDKV11', '~> 11.4.7' #for all packages
+		pod 'AcuantiOSSDKV11', '~> 11.5.1' #for all packages
 		
-		#indepedent packages below
+ Alternatively, use the following to add **independent** modules in the podfile:
 		
-		#=== AcuantCamera ====
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantCamera'
-		dependency AcuantImagePreparation
-		dependency AcuantCommon
-		
-		pod 'AcuantiOSSDKV11/AcuantCamera/Mrz' # if you want MRZ camera
-		dependency TesseractOCRiOS
-				
-		pod 'AcuantiOSSDKV11/AcuantCamera/Document' # if you want Document camera
-		# =====================
+ - AcuantCamera
 
-		#AcuantFaceCapture
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantFaceCapture'
+			pod 'AcuantiOSSDKV11/AcuantCamera'
+			dependency AcuantImagePreparation
+			dependency AcuantCommon
+					
+			pod 'AcuantiOSSDKV11/AcuantCamera/Document' # if you want Document camera
+			
+			pod 'AcuantiOSSDKV11/AcuantCamera/Mrz' # if you want MRZ camera
+			dependency TesseractOCRiOS
+		
+ - AcuantFaceCapture
 
-		#AcuantImagePreparation
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantImagePreparation'
-		dependency AcuantCommon
-		
-		#AcuantDocumentProcessing
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantDocumentProcessing'
-		dependency AcuantCommon
+			pod 'AcuantiOSSDKV11/AcuantFaceCapture'
 
-		#AcuantHGLiveness
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantHGLiveness'
-		dependency AcuantCommon
+ - AcuantImagePreparation
+
+			pod 'AcuantiOSSDKV11/AcuantImagePreparation'
+			dependency AcuantCommon
+			
+ - AcuantDocumentProcessing
+
+			pod 'AcuantiOSSDKV11/AcuantDocumentProcessing'
+			dependency AcuantCommon
+
+ - AcuantHGLiveness
+
+			pod 'AcuantiOSSDKV11/AcuantHGLiveness'
+			dependency AcuantCommon
+			
+ - AcuantIPLiveness
+
+			pod 'AcuantiOSSDKV11/AcuantIPLiveness'
+			dependency AcuantCommon
+			dependency iProov
+
+ - AcuantPassiveLiveness
+
+			pod 'AcuantiOSSDKV11/AcuantPassiveLiveness'
+			dependency AcuantCommon
+			
+ - AcuantFaceMatch
+
+			pod 'AcuantiOSSDKV11/AcuantFaceMatch'
+			dependency AcuantCommon
+
+ - AcuantEchipReader
+
+			pod 'AcuantiOSSDKV11/AcuantEchipReader'
+			dependency AcuantCommon
 		
-		#AcuantIPLiveness
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantIPLiveness'
-		dependency AcuantCommon
-		dependency iProov
-		
-		#AcuantPassiveLiveness
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantPassiveLiveness'
-		dependency AcuantCommon
-		
-		#AcuantFaceMatch
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantFaceMatch'
-		dependency AcuantCommon
-		
-		#AcuantEchipReader
-		platform :ios, '11'
-		pod 'AcuantiOSSDKV11/AcuantEchipReader'
-		dependency AcuantCommon
-		
-1. 	Enable "BUILD\_FOR\_DISTRIBUTION" for all Acuant pod frameworks in Build Settings.
+1. Enable "BUILD\_FOR\_DISTRIBUTION" for all Acuant pod frameworks in Build Settings.
 
 	- Using Cocoapods. Add to your Podfile.
 		
@@ -192,11 +207,10 @@ The SDK includes the following modules:
 		![](docs/cocoapodsetup.png)
 		
 
-
 ----------
 
 ### Required Setup
-1. Create a **plist** file named **AcuantConfig** which includes the following details:
+Create a **plist** file named **AcuantConfig** that includes the following details:
 
     	<?xml version="1.0" encoding="UTF-8"?>
 		<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -280,40 +294,16 @@ The SDK includes the following modules:
 			<string>https://aus.ozone.acuant.net</string>
 
 
-----------
-### Bearer Tokens
-
-1. Use Acuant Services to retrieve a token. We recommend using a proxy service to retrieve the token to ensure integrity of credentials.
-
-2. Set the token:
-
-		if let success = Credential.setToken(token: ""){
-			//token was valid
-		}
-		else{
-			//invalid or expired token
-		}
-
-3. Tokens will eventually expire, depending on the provided settings. Use the method below to ensure token is still valid before reusing the token.
-
-		if let token : AcuantJwtToken = Credential.getToken(){
-			let valid: Bool = token.isValid()
-		}
-		
-4. **Note:** If token is set, all service calls will attempt to authorize using the token. If the token is not set, the legacy credentials will be used.
-
-5. **Important Note:** You will still need to provide the SubscriptionId in the Credential object in order to use Acuant Services with bearer tokens.
-
-
 ### Initialize
 
 **Initialization**
+Before you use the SDK, you must initialize it, either by using the credentials saved on the device or by using bearer tokens (provided by an external server).
 
 1. Select packages for initialization.
 
-		let packages = [AcuantEchipPackage(), AcuantImagePreparationPackage()]
+		let packages = [AcuantEchipPackage(), ImagePreparationPackage()]
 
-1. Initialize the sdk.
+1. Initialize the SDK. 
 		
 		let initalizer: IAcuantInitializer = AcuantInitializer()
         
@@ -341,17 +331,42 @@ The SDK includes the following modules:
 		endpoints.ozoneEndpoint = "https://ozone.acuant.net"
 
 		Credential.setEndpoints(endpoints: endpoints)		
+### Bearer Tokens
+
+1. Use Acuant Services to retrieve a token. Acuant recommends using a proxy service to retrieve the token to ensure integrity of credentials.
+
+2. Set the token:
+
+		if let success = Credential.setToken(token: ""){
+			//token was valid
+		}
+		else{
+			//invalid or expired token
+		}
+
+3. Tokens will eventually expire, depending on the provided settings. Use the method below to ensure token is still valid before reusing the token.
+
+		if let token : AcuantJwtToken = Credential.getToken(){
+			let valid: Bool = token.isValid()
+		}
+		
+4. **Note:** If token is set, all service calls will attempt to authorize using the token. If the token is not set, the legacy credentials will be used.
+
+5. **Important Note:** You will still need to provide the SubscriptionId in the Credential object in order to use Acuant Services with bearer tokens.
+	
 		
 ### Initialization without a Subscription ID
 
-**AcuantImagePreparation** may be initialized by providing only a username and a password. However, without providing a Subscription ID, the application can only capture an image and get the image. 
+**AcuantImagePreparation** may be initialized by providing only a username and a password. However, without providing a Subscription ID, the application can only capture an image and get the image.
+ 
 Initialize without a Subscription ID:
 
 -	Only the **AcuantCamera**, **AcuantImagePreparation**, and **AcuantHGLiveness** modules may be used.
 -	The SDK can be used to capture the identity documents.
 -	The captured images can be exported from the SDK. See the **DocumentCaptureDelegate** protocol in the **AcuantCamera** project.
 		
-		
+----------
+
 ### Capture an Image using AcuantCamera
 
 1. AcuantCamera is best used in portrait mode. Lock the orientation of the app before using Camera. It is also possible to specify the orientation of the camera in the `DocumentCameraController` constructor
@@ -364,9 +379,9 @@ by using a `UIInterfaceOrientationMask`.
 	    	func setCapturedImage(image:Image, barcodeString:String?)
 		}
 		
-1. Open the camera. Options can be defined through an options object. See **AcuantCameraOptions** for all configurable fields.
+1. Open the camera. Options can be defined through an options object. See **CameraOptions** for all configurable fields.
 		
-		let options = AcuantCameraOptions(autoCapture: true, hideNavigationBar: true)
+		let options = CameraOptions(autoCapture: true, hideNavigationBar: true)
 		let documentCameraController = DocumentCameraController.getCameraController(delegate:self!, cameraOptions: options)
         
 		navigationController.pushViewController(documentCameraController, animated: false)
@@ -394,11 +409,11 @@ by using a `UIInterfaceOrientationMask`.
 		
 		
 		
-**Custom UI with DocumentCaptureSesssion (see DocumentCameraController.swift for reference):**
+**Using Custom UI with DocumentCaptureSession (see DocumentCameraController.swift for reference):**
 
-1. Get the DocumentCaptureSesssion.
+1. Get the DocumentCaptureSession.
 		
-		@objc public protocol DocumentCaptureDelegate {
+		public protocol DocumentCaptureDelegate {
 		    func readyToCapture() // gets called when triggering capture
 		    func documentCaptured(image:UIImage, barcodeString:String?) // gets called with captured result
 		}
@@ -406,19 +421,20 @@ by using a `UIInterfaceOrientationMask`.
 		let captureSession = DocumentCaptureSession.getDocumentCaptureSession(
 			delegate: DocumentCaptureDelegate, // session callback
 			frameDelegate: FrameAnalysisDelegate, // frame analysis callback
-			autoCapture:Bool, // enable frame analysis
-			captureDevice:AVCaptureDevice?) // AV Capture Device 
+			autoCaptureDelegate: AutoCaptureDelegate, // enable frame analysis/auto capture
+			captureDevice: AVCaptureDevice?) // AV Capture Device 
 			
 1. Start the session, and then add the session to AVCaptureVideoPreviewLayer.
 
 		captureSession.start() // will start the capture session.
 		let videoPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-		//add custom ui
+		
+		//write your own custom UI code
 
 		
 1. Receive Frame Results.
 		
-		@objc public enum FrameResult : Int{
+		public enum FrameResult : Int{
 		    case NO_DOCUMENT, // No document
 		    	SMALL_DOCUMENT, // Document is small
 		    	BAD_ASPECT_RATIO, // Document type does not match aspect ratio
@@ -426,7 +442,7 @@ by using a `UIInterfaceOrientationMask`.
 		    	DOCUMENT_NOT_IN_FRAME // Document is not in frame
 		}
 		
-		@objc public protocol FrameAnalysisDelegate{
+		public protocol FrameAnalysisDelegate{
 		    func onFrameAvailable(frameResult: FrameResult, points: Array<CGPoint>?)
 		}
 		
@@ -445,7 +461,6 @@ by using a `UIInterfaceOrientationMask`.
 
 1. Add Tesseract dependency. See https://github.com/gali8/Tesseract-OCR-iOS
 
-
 1. Add the OCRB Training data to you project. We recommend using the training data resource in Assets directory of the Sample App. Please refer to https://www.raywenderlich.com/2010498-tesseract-ocr-tutorial-for-ios#toc-anchor-005.
 
 1. Set View Controller UI customizations.
@@ -455,7 +470,7 @@ by using a `UIInterfaceOrientationMask`.
 		}
 		
 		let vc = AcuantMrzCameraController()
-		vc.options = AcuantCameraOptions()
+		vc.options = CameraOptions()
 		
 		vc.customDisplayMessage : ((MrzCameraState) -> String) = {
 			state in
@@ -522,11 +537,11 @@ by using a `UIInterfaceOrientationMask`.
 
 1. AcuantEchipPackage must be initialized in the previous step.
 
-1. This feature is only available in iOS version 13. You will need to use the @available attribute to use methods inside module.
+1. This feature is only available in iOS version 13 and above. You will need to use the @available attribute to use methods inside module.
 
 1. Create an instance of Acuant Reader. Make sure this object does not get disposed while reading.
 
-		private let reader: IAcuantEchipReader = AcuantEchipReader()
+		private let reader: IEchipReader = EchipReader()
 		
 1. Create a session request.
 
@@ -651,9 +666,13 @@ This module contains all image preparation functionality.
 
 After an image is captured, it is cropped and checked for sharpness and glare. This is done using the **evaluateImage** of **AcuantImagePreparation**.
 
-	public class func evaluateImage(image: UImage, callback: (AcuantImage, AcuantError) -> ())
+	public class func evaluateImage(data: CroppingData, callback: (AcuantImage, AcuantError) -> ())
+	
+To create the CroppingData used above, use the following method passing in the Image that you received from the camera:
 
-The callback returns the **AcuantImage** and **AcuantError**. The **AcuantImage** can be used to be verify the crop, sharpness, and glare.
+	CroppingData.newInstance(image: Image)
+
+The callback returns the **AcuantImage** and **AcuantError**. The **AcuantImage** can be used to verify the crop, sharpness, and glare of the image, and then upload the document in the next step (see [AcuantDocumentProcessing](#acuantdocumentprocessing)).
 
 	public class AcuantImage {
 		public let image: UIImage
@@ -661,11 +680,21 @@ The callback returns the **AcuantImage** and **AcuantError**. The **AcuantImage*
 		public let sharpness: Int
 		public let glare: Int
 		public let dpi: Int
-	}		
+		public let isPassport: Bool
+	}	
+	
+If the sharpness value is greater than 50, then the image is considered sharp (not blurry). If the glare value is 100, then the image does not contain glare. If the glare value is 0, then image contains glare.
+	
+Preferably, the image must be sharp and not contain glare to get best results in authentication and data extraction. When the image has glare, low sharpness, or both, retry the capture.
+	
+Acuant recommends against modifying and/or compressing the resulting AcuantImage.image before uploading. Modifying and/or compressing the AcuantImage.image may negatively affect authentication and data extraction results.
+
+**Note:** If you are using an independent orchestration layer, then make sure you supply AcuantImage.data not just AcuantImage.image.	
+
 ----------
 ### AcuantDocumentProcessing
 
-After a document image is captured, it can be processed using the following steps.
+After you capture a document image and completed crop, it can be processed using the following steps.
 
 **Note:** If an upload fails with an error, retry the image upload using a better image.
 
@@ -727,7 +756,7 @@ After a document image is captured, it can be processed using the following step
 		"acuant_face_camera_capturing_1" = "Capturing\n1...";	
 1. Set any UI Customizations needed:
 		
-		class FaceAcuantCameraOptions{
+		class FaceCameraOptions{
 			public let totalCaptureTime: Int //totoal time to capture
 			public let bracketColorDefault: CGColor //bracket color default (no face)
 			public let bracketColorError: CGColor //bracket color error (error in face requirements)
@@ -740,11 +769,11 @@ After a document image is captured, it can be processed using the following step
 		}
 		
 		//example
-		let options = FaceAcuantCameraOptions()
+		let options = FaceCameraOptions()
 		
 1. Get the Controller and push to navigationController:
 
-		let controller = AcuantFaceCaptureController()
+		let controller = FaceCaptureController()
 		controller.options = options
 		controller.callback = { [weak self]
 			(image: UIImage?) in
@@ -763,7 +792,7 @@ After a document image is captured, it can be processed using the following step
 ----------
 
 ### Acuant Passive Liveness
-Acuant recommends using the **LiveAssessment** property rather than the score) to evaluate response. **AcuantPassiveLiveness.startSelfieCapture** will return a rescaled image.
+Acuant recommends using the **LiveAssessment** property rather than the score) to evaluate response. **PassiveLiveness.startSelfieCapture** will return a rescaled image.
 
 Follow these recommendations to effectively process an image for passive liveness:
 #### Image requirements
@@ -832,7 +861,7 @@ The following may significantly increase errors or false results:
 		}
 		
 		//example
-		AcuantPassiveLiveness.postLiveness(request: AcuantLivenessRequest(image: image)){ [weak self]
+		PassiveLiveness.postLiveness(request: AcuantLivenessRequest(image: image)){ [weak self]
 			(result: AcuantLivenessResponse?, error: AcuantLivenessError?) in
 				//response
 		}
@@ -869,13 +898,13 @@ This module checks for liveness (whether the subject is a live person) by using 
     }
 
 	public protocol AcuantHGLiveFaceCaptureDelegate {
-			func liveFaceDetailsCaptured(liveFaceDetails: LiveFaceDetails?, faceType: AcuantHGLiveness.AcuantFaceType)
+			func liveFaceDetailsCaptured(liveFaceDetails: LiveFaceDetails?, faceType: HGLiveness.AcuantFaceType)
 	}
 
 	public class func getFaceCaptureSession(delegate:AcuantHGLiveFaceCaptureDelegate?, captureDevice: AVCaptureDevice?)-> FaceCaptureSession
 
     
-    let faceCaptureSession = AcuantHGLiveness.getFaceCaptureSession(delegate: self, captureDevice: captureDevice)
+    let faceCaptureSession = HGLiveness.getFaceCaptureSession(delegate: self, captureDevice: captureDevice)
 
 ----------
 
@@ -886,7 +915,7 @@ The **AcuantIPLiveness** module checks whether the subject is a live person.
 1. Run the setup:
 
 
-    	AcuantIPLiveness.performLivenessSetup(delegate:LivenessSetupDelegate)
+    	IPLiveness.performLivenessSetup(delegate:LivenessSetupDelegate)
 
     	public protocol LivenessSetupDelegate{
     		func livenessSetupSucceeded(result:LivenessSetupResult) // Called when setup succeeds
@@ -920,18 +949,20 @@ The **AcuantIPLiveness** module checks whether the subject is a live person.
 		setupResult.ui.scanLineDisabled = false // Disables the vertical sweeping scanline while flashing
 		setupResult.ui.autoStartDisabled = false // Disable the "auto start" countdown functionality. The user will have to tap the screen to start liveness test
 
-		AcuantIPLiveness.performLivenessTest(setupResult:LivenessSetupResult, delegate:LivenessTestDelegate)
+		IPLiveness.performLivenessTest(setupResult:LivenessSetupResult, delegate:LivenessTestDelegate)
 		
 		public protocol LivenessTestDelegate{
 			func livenessTestCompleted() // This is for the test; called when Enroll is complete
 			func livenessTestCompletedWithError(error:AcuantError?) // This is for the test; called when Enroll is complete and error occured
 			func livenessTestProcessing(progress: Double, message: String) // This is for real-time notifications of progress of liveness test. It will be called after user captures live face. It is intended to be used for custom UI progress notification.
+			func livenessTestConnecting() // Will be called before face capture starts. Use for custom UI while test is connecting.
+			func livenessTestConnected() // Will be called as face capture starts. Can usually be blank or can be used to clear any custom connecting UI if needed.
 
 		}
 		
 3. Get the liveness test result:
 	
-		AcuantIPLiveness.getLivenessTestResult(token:String,userId:String,delegate:LivenessTestResultDelegate)
+		IPLiveness.getLivenessTestResult(token:String,userId:String,delegate:LivenessTestResultDelegate)
 		
 		public protocol LivenessTestResultDelegate{
     		func livenessTestResultReceived(result:LivenessResult) // Called when test result was received successfully
@@ -1055,9 +1086,9 @@ This module is used to match two facial images:
     	public init(){}
     }
     
-### AcuantCameraOptions
+### CameraOptions
 
-	public class AcuantCameraOptions{    
+	public class CameraOptions{    
 	    public let timeInMsPerDigit: Int
 	    public let digitsToShow: Int
 	    public let allowBox: Bool
@@ -1088,6 +1119,9 @@ This module is used to match two facial images:
 
 ## Frequently Asked Questions
 
+### Why do I get "No such module" error in Xcode when using "import AcuantCamera" when using CocoaPods
+**AcuantCamera** and **AcuantFaceCapture** are open projects and must be compiled by the user. With CocoaPods, both are compiled into pods name **AcuantiOSSDKV11** in which `import AcuantiOSSDKV11` must be used in Xcode. Using `import AcuantCamera` and `import AcuantFaceCapture` will not work.
+
 ### What causes an "Unsupported Architecture" error when publishing the app in the Apple App store?
 
 All frameworks are *fat* (multi-architecture) binaries that contain *slices* for **armv7**, **arm64**, **i386**, and **x86(64)**  CPU architectures. ARM slices are used by physical iOS devices, while i386 and x86(64) are used by the simulator.
@@ -1115,7 +1149,7 @@ Acuant does not provide obfuscation tools, however several third-party tools, in
 
 -------------------------------------------------------------
 
-**Copyright 2020 Acuant Inc. All rights reserved.**
+**Copyright 2021 Acuant Inc. All rights reserved.**
 
 This document contains proprietary and confidential information and creative works owned by Acuant and its respective licensors, if any. Any use, copying, publication, distribution, display, modification, or transmission of such technology, in whole or in part, in any form or by any means, without the prior express written permission of Acuant is strictly prohibited. Except where expressly provided by Acuant in writing, possession of this information shall not be construed to confer any license or rights under any Acuant intellectual property rights, whether by estoppel, implication, or otherwise.
 
